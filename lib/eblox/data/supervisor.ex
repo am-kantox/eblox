@@ -10,7 +10,7 @@ defmodule Eblox.Data.Providers do
   @impl Supervisor
   def init(providers) do
     children = [
-      Siblings
+      Siblings.child_spec(name: Eblox.Data.Providers)
       # {Eblox.Data.Monitor, content: providers}
     ]
 
@@ -24,7 +24,10 @@ defmodule Eblox.Data.Providers do
           {id, opts} = Keyword.pop(opts, :id, worker)
           {interval, opts} = Keyword.pop(opts, :interval, @default_interval)
 
-          Siblings.start_child(worker, id, Keyword.put(opts, :impl, impl), interval: interval)
+          Siblings.start_child(worker, id, Keyword.put(opts, :impl, impl),
+            name: Eblox.Data.Providers,
+            interval: interval
+          )
         end)
       end)
     end)
