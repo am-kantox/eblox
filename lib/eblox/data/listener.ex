@@ -32,7 +32,7 @@ defmodule Eblox.Data.Listener do
            Siblings.start_child(
              Eblox.Data.PostFSM,
              file,
-             %{file: Path.join([Eblox.Application.content_dir(), file])},
+             %{},
              interval: random_interval()
            ),
          do: :ok
