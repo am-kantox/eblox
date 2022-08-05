@@ -24,10 +24,13 @@ defmodule Eblox.Data.Providers do
           {id, opts} = Keyword.pop(opts, :id, worker)
           {interval, opts} = Keyword.pop(opts, :interval, @default_interval)
 
-          Siblings.start_child(worker, id, Keyword.put(opts, :impl, impl),
-            name: Eblox.Data.Providers,
-            interval: interval
-          )
+          state =
+            opts
+            |> Keyword.put(:impl, impl)
+            |> Keyword.put(:files, %Eblox.Data.Provider{})
+            |> Map.new()
+
+          Siblings.start_child(worker, id, state, name: Eblox.Data.Providers, interval: interval)
         end)
       end)
     end)

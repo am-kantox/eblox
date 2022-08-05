@@ -21,7 +21,7 @@ defmodule Eblox.Data.Provider do
   @doc """
   The providers must implement this callback returning the changes found
   """
-  @callback scan :: t()
+  @callback scan(options :: keyword()) :: t()
 
   @fsm """
   idle --> |scan| ready
@@ -33,8 +33,11 @@ defmodule Eblox.Data.Provider do
 
   @doc false
   def on_transition(_, :scan, _, payload) do
-    # do_scan
-    IO.inspect(payload, label: "PROVIDER")
+    # TODO Checks and proper error messages
+    {impl, options} = Map.pop(payload, :impl)
+    %__MODULE__{} = result = impl.scan(options)
+
+    IO.inspect(result, label: "PROVIDER")
     {:ok, :ready, payload}
   end
 
