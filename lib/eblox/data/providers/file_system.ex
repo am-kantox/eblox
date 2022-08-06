@@ -3,14 +3,14 @@ defmodule Eblox.Data.Providers.FileSystem do
 
   alias Eblox.Data.Provider
 
-  @type md5 :: binary()
+  @type md5 :: <<_::256>>
 
   @behaviour Provider
 
   @impl Provider
   def scan(options) do
     content_dir = Map.get(options, :content_dir, File.cwd())
-    old_files = Map.get(options, :files, %Provider{})
+    old_files = Map.get(options, :resources, %{})
 
     files =
       content_dir
@@ -21,13 +21,13 @@ defmodule Eblox.Data.Providers.FileSystem do
         file
         |> File.read()
         |> case do
-          {:ok, content} -> Map.put(acc, Path.relative_to(file, content_dir), md5(content))
+          {:ok, content} -> Map.put(acc, file, md5(content))
           _ -> acc
         end
       end)
       |> Map.new()
 
-    diff(files, old_files)
+    {Map.put(options, :resources, files), diff(files, old_files)}
   end
 
   @spec file_list(Path.t()) :: %{Path.t() => md5()}

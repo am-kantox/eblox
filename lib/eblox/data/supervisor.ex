@@ -10,7 +10,8 @@ defmodule Eblox.Data.Providers do
   @impl Supervisor
   def init(providers) do
     children = [
-      Siblings.child_spec(name: Eblox.Data.Providers)
+      Siblings.child_spec(name: Eblox.Data.Providers),
+      Siblings.child_spec(name: Eblox.Data.Content)
       # {Eblox.Data.Monitor, content: providers}
     ]
 
@@ -27,7 +28,7 @@ defmodule Eblox.Data.Providers do
           state =
             opts
             |> Keyword.put(:impl, impl)
-            |> Keyword.put(:files, %Eblox.Data.Provider{})
+            |> Keyword.put(:resources, %{})
             |> Map.new()
 
           Siblings.start_child(worker, id, state, name: Eblox.Data.Providers, interval: interval)
