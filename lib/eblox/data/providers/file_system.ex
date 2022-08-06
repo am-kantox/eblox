@@ -30,7 +30,7 @@ defmodule Eblox.Data.Providers.FileSystem do
     {Map.put(options, :resources, files), diff(files, old_files)}
   end
 
-  @spec file_list(Path.t()) :: %{Path.t() => md5()}
+  @spec file_list(Path.t()) :: [Path.t()]
   defp file_list(directory) do
     dig = fn
       {:ok, files}, path -> Enum.flat_map(files, &file_list(Path.join(path, &1)))

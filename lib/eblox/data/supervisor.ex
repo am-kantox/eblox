@@ -19,6 +19,7 @@ defmodule Eblox.Data.Providers do
     |> Supervisor.init(strategy: :rest_for_one)
     |> tap(fn _ ->
       Task.start(fn ->
+        # TODO Move this initialization inside Siblings
         Process.sleep(1_000)
 
         Enum.each(providers, fn {worker, {impl, opts}} ->

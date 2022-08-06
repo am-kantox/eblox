@@ -18,12 +18,14 @@ defmodule Eblox.Data.Provider do
   """
   @type t :: %{__struct__: Provider, created: [uri()], deleted: [uri()], changed: [uri()]}
 
+  use Estructura, enumerable: true
+
   defstruct created: [], deleted: [], changed: []
 
   @doc """
   The providers must implement this callback returning the changes found
   """
-  @callback scan(options :: keyword()) :: {keyword(), t()}
+  @callback scan(options :: map()) :: {map(), t()}
 
   @fsm """
   idle --> |scan| ready
@@ -39,10 +41,7 @@ defmodule Eblox.Data.Provider do
     {impl, options} = Map.pop(payload, :impl)
     {options, %Provider{} = result} = impl.scan(options)
 
-    result
-    |> Map.from_struct()
-    |> Map.take(~w|created deleted changed|a)
-    |> handle_changes()
+    handle_changes(result)
 
     {:ok, :ready, Map.put(options, :impl, impl)}
   end
@@ -55,7 +54,7 @@ defmodule Eblox.Data.Provider do
   def perform(_state, _id, payload), do: {:transition, :scan, payload}
 
   @spec handle_changes(t()) :: [:ok]
-  def handle_changes(%{created: _, deleted: _, changed: _} = changes) do
+  def handle_changes(%Provider{created: _, deleted: _, changed: _} = changes) do
     changes
     |> Flow.from_enumerable()
     |> Flow.flat_map(fn {action, list} -> Enum.map(list, &{action, &1}) end)
