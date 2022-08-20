@@ -3,7 +3,7 @@ defmodule Eblox.Data.Taxonomy do
 
   use Supervisor
 
-  @type post_id() :: term()
+  @type post_id() :: Siblings.Worker.id()
   @type registry_option() :: Registry.start_option()
 
   @callback registry_options([registry_option()]) :: [registry_option()]
@@ -29,13 +29,13 @@ defmodule Eblox.Data.Taxonomy do
     end
 
     def impl(name) do
-      Agent.get(name, &(&1 |> Map.get(:impl)))
+      Agent.get(name, & &1.impl)
     end
   end
 
   def start_link(opts), do: Supervisor.start_link(__MODULE__, opts)
 
-  def init(opts \\ []) do
+  def init(opts) do
     {impl, opts} = Keyword.pop!(opts, :impl)
     {name, _opts} = Keyword.pop(opts, :name, impl)
 
