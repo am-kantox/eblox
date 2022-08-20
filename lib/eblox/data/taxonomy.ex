@@ -24,7 +24,9 @@ defmodule Eblox.Data.Taxonomy do
     @enforce_keys ~w|impl|a
     defstruct ~w|impl|a
 
-    def start_link([{:impl, impl} | opts]) do
+    def start_link(opts) do
+      {impl, opts} = Keyword.pop!(opts, :impl)
+
       Agent.start_link(fn -> %Meta{impl: impl} end, opts)
     end
 
