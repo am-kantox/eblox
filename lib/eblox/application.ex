@@ -14,8 +14,7 @@ defmodule Eblox.Application do
                   ])
 
   @data_taxonomies Application.compile_env(:eblox, :data_taxonomies, [
-                     {Eblox.Data.Taxonomy,
-                      impl: Eblox.Data.Taxonomies.Comments}
+                     {Eblox.Data.Taxonomy, impl: Eblox.Data.Taxonomies.Comments}
                    ])
 
   @impl Application

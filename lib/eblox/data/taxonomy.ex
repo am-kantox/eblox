@@ -18,9 +18,9 @@ defmodule Eblox.Data.Taxonomy do
     alias Eblox.Data.Taxonomy.Meta
 
     @type t :: %{
-      __struct__: Meta,
-      impl: module(),
-    }
+            __struct__: Meta,
+            impl: module()
+          }
     @enforce_keys ~w|impl|a
     defstruct ~w|impl|a
 
@@ -33,8 +33,7 @@ defmodule Eblox.Data.Taxonomy do
     end
   end
 
-  def start_link(opts), do:
-    Supervisor.start_link(__MODULE__, opts)
+  def start_link(opts), do: Supervisor.start_link(__MODULE__, opts)
 
   def init(opts \\ []) do
     {impl, opts} = Keyword.pop!(opts, :impl)
