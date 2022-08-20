@@ -13,6 +13,11 @@ defmodule Eblox.Application do
                        Application.compile_env(:eblox, :content_dir, "priv/test_content")}
                   ])
 
+  @data_taxonomies Application.compile_env(:eblox, :data_taxonomies, [
+                     {Eblox.Data.Taxonomy,
+                      impl: Eblox.Data.Taxonomies.Comments}
+                   ])
+
   @impl Application
   def start(_type, _args) do
     children = [
@@ -24,8 +29,10 @@ defmodule Eblox.Application do
       {Phoenix.PubSub, name: Eblox.PubSub},
       # Start the Endpoint (http/https)
       EbloxWeb.Endpoint,
-      # Siblings is a main cache for posts
-      {Eblox.Data.Providers, @data_providers}
+      # Providers collect posts data and cache it
+      {Eblox.Data.Providers, @data_providers},
+      # Taxonomies organize posts data collected by Providers
+      {Eblox.Data.Taxonomies, @data_taxonomies}
       # Start a worker by calling: Eblox.Worker.start_link(arg)
       # {Eblox.Worker, arg}
     ]
