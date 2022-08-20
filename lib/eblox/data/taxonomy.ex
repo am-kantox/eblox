@@ -4,9 +4,9 @@ defmodule Eblox.Data.Taxonomy do
   use Supervisor
 
   @type post_id() :: term()
-  @type registry_options() :: [Registry.start_option()]
+  @type registry_option() :: Registry.start_option()
 
-  @callback start_options(registry_options()) :: registry_options()
+  @callback registry_options([registry_option()]) :: [registry_option()]
   @callback on_add(module(), post_id(), term()) :: :ok | :error
   @callback on_remove(module(), post_id()) :: :ok
 
@@ -42,7 +42,7 @@ defmodule Eblox.Data.Taxonomy do
 
     children = [
       {Meta, impl: impl, name: meta_name(name)},
-      {Registry, impl.start_options(name: reg_name(name))}
+      {Registry, impl.registry_options(name: reg_name(name))}
       # {PubSub, name: pubsub_name(name)}
     ]
 

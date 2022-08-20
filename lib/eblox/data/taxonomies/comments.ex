@@ -6,7 +6,7 @@ defmodule Eblox.Data.Taxonomies.Comments do
   @behaviour Taxonomy
 
   @impl Taxonomy
-  def start_options(opts \\ []) do
+  def registry_options(opts \\ []) do
     Keyword.merge([keys: :duplicate, name: __MODULE__], opts)
   end
 
