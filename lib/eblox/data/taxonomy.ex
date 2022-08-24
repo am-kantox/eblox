@@ -7,7 +7,7 @@ defmodule Eblox.Data.Taxonomy do
   @type registry_option() :: Registry.start_option()
 
   @callback registry_options([registry_option()]) :: [registry_option()]
-  @callback on_add(module(), post_id(), term()) :: :ok | :error
+  @callback on_add(module(), post_id()) :: :ok | :error
   @callback on_remove(module(), post_id()) :: :ok
 
   defmodule Meta do
@@ -50,8 +50,8 @@ defmodule Eblox.Data.Taxonomy do
     Supervisor.init(children, name: sup_name(name), strategy: :one_for_one)
   end
 
-  def add(name, post_id, value \\ nil) do
-    impl(name).on_add(reg_name(name), post_id, value)
+  def add(name, post_id) do
+    impl(name).on_add(reg_name(name), post_id)
   end
 
   def remove(name, post_id) do

@@ -11,7 +11,7 @@ defmodule Eblox.Data.Taxonomies.Comments do
   end
 
   @impl Taxonomy
-  def on_add(registry, post_id, _value) do
+  def on_add(registry, post_id) do
     # TODO: Get parent ID from the payload when it's available.
     %{file: parent_id} = Siblings.payload(Eblox.Data.Content, post_id)
 
