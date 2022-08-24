@@ -1,5 +1,7 @@
 defmodule Eblox.Data.Taxonomies do
-  @moduledoc false
+  @moduledoc """
+  Supervisor for all data taxonomies.
+  """
 
   use Supervisor
 

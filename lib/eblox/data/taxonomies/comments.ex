@@ -1,5 +1,7 @@
 defmodule Eblox.Data.Taxonomies.Comments do
-  @moduledoc false
+  @moduledoc """
+  Data taxonomy implementation for post's comments tree.
+  """
 
   alias Eblox.Data.Taxonomy
 
