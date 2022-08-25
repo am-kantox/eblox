@@ -97,6 +97,14 @@ defmodule Eblox.Data.Taxonomy do
     |> Enum.map(&elem(&1, 1))
   end
 
+  @doc "Converts registry to a map with keys and lists of values."
+  @spec to_map(module()) :: %{registry_key() => [registry_value()]}
+  def to_map(name) do
+    reg_name(name)
+    |> Registry.select([{{:"$1", :_, :"$2"}, [], [{{:"$1", :"$2"}}]}])
+    |> Enum.group_by(&elem(&1, 0), &elem(&1, 1))
+  end
+
   defp impl(name) do
     name
     |> meta_name()
