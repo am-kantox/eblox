@@ -27,7 +27,7 @@ defmodule Eblox.Data.Post do
 
     @impl Md.Transforms
     def apply(md, text) do
-      {:a, %{class: "tag", href: @href <> text}, [md <> text]}
+      {:a, %{class: "tag", href: URI.encode_www_form(@href <> text)}, [md <> text]}
     end
   end
 
