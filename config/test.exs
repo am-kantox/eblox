@@ -7,7 +7,7 @@ import Config
 # Run `mix help test` for more information.
 config :eblox, Eblox.Repo,
   username: "postgres",
-  password: "postgres"
+  password: "postgres",
   database: "eblox_test#{System.get_env("MIX_TEST_PARTITION")}",
   pool: Ecto.Adapters.SQL.Sandbox,
   pool_size: 10
