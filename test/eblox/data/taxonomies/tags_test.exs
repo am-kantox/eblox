@@ -25,12 +25,12 @@ defmodule Eblox.Data.Taxonomies.TagsTest do
     end)
 
     assert [post_id("post-1"), post_id("post-3"), post_id("post-4")] ==
-             @taxonomy |> Taxonomy.lookup("🏷fox") |> Enum.sort()
+             @taxonomy |> Taxonomy.lookup("%fox") |> Enum.sort()
 
     assert [post_id("post-1"), post_id("post-3")] ==
-             @taxonomy |> Taxonomy.lookup("🏷dog") |> Enum.sort()
+             @taxonomy |> Taxonomy.lookup("%dog") |> Enum.sort()
 
     assert [post_id("post-2"), post_id("post-3")] ==
-             @taxonomy |> Taxonomy.lookup("🏷βδελυγμία") |> Enum.sort()
+             @taxonomy |> Taxonomy.lookup("%βδελυγμία") |> Enum.sort()
   end
 end
