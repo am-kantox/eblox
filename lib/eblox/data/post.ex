@@ -33,10 +33,12 @@ defmodule Eblox.Data.Post do
 
   defmodule EbloxParser do
     @moduledoc false
+
+    @tag_terminators [?., ?,, ?;, ?:, ??, ?!]
     @eblox_syntax Md.Parser.Syntax.merge(
                     Application.compile_env(:eblox_syntax, :md_syntax, %{
                       magnet: [
-                        {"🏷", %{transform: Tag, terminators: [], greedy: false}}
+                        {"🏷", %{transform: Tag, terminators: @tag_terminators, greedy: false}}
                       ]
                     })
                   )
