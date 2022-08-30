@@ -84,7 +84,7 @@ defmodule Eblox.Data.Taxonomy do
   end
 
   @doc "Removes a node associated with a given post ID from a taxonomy."
-  @spec add(module(), post_id()) :: :ok | :error
+  @spec remove(module(), post_id()) :: :ok | :error
   def remove(name, post_id) do
     impl(name).on_remove(reg_name(name), post_id)
   end

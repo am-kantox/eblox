@@ -21,7 +21,7 @@ defmodule Eblox.Data.TaxonomyTest do
     # - It's slow for tests.
     # - There should be a better way to wait until all posts are parsed.
     # - It may be better to setup it once per test module with `setup_all`.
-    Process.sleep(10000)
+    Process.sleep(10_000)
 
     Taxonomy.add(@taxonomy, post_id("post-1"))
     Taxonomy.add(@taxonomy, post_id("post-2"))

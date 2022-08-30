@@ -64,7 +64,7 @@ defmodule Eblox.Data.Post do
 
   def on_transition(:read, :parse, nil, %{content: content} = payload) do
     case EbloxParser.parse(content) do
-      {_, %Md.Parser.State{} = parsed} ->
+      {"", %Md.Parser.State{} = parsed} ->
         {html, properties} = Md.generate(parsed, walker: &Walker.prewalk/2, format: :none)
 
         payload =
