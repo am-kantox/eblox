@@ -100,7 +100,9 @@ defmodule Eblox.Data.Taxonomy do
   @doc "Returns keys of a taxonomy."
   @spec keys(module()) :: [registry_key()]
   def keys(name) do
-    Registry.keys(reg_name(name), self())
+    reg_name(name)
+    |> Registry.keys(self())
+    |> Enum.uniq()
   end
 
   @doc "Returns values of a taxonomy for the given key."

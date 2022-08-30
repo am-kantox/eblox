@@ -32,5 +32,8 @@ defmodule Eblox.Data.Taxonomies.TagsTest do
 
     assert [post_id("post-2"), post_id("post-3")] ==
              @taxonomy |> Taxonomy.lookup("%βδελυγμία") |> Enum.sort()
+
+    assert ["%dog", "%fox", "%βδελυγμία"] ==
+             @taxonomy |> Taxonomy.keys() |> Enum.sort()
   end
 end
