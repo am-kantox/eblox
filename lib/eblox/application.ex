@@ -14,7 +14,14 @@ defmodule Eblox.Application do
                   ])
 
   @data_taxonomies Application.compile_env(:eblox, :data_taxonomies, [
-                     {Eblox.Data.Taxonomy, impl: Eblox.Data.Taxonomies.Comments}
+                     Supervisor.child_spec(
+                       {Eblox.Data.Taxonomy, impl: Eblox.Data.Taxonomies.Comments},
+                       id: Eblox.Data.Taxonomies.Comments
+                     ),
+                     Supervisor.child_spec(
+                       {Eblox.Data.Taxonomy, impl: Eblox.Data.Taxonomies.Tags},
+                       id: Eblox.Data.Taxonomies.Tags
+                     )
                    ])
 
   @impl Application

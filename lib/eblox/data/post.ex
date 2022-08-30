@@ -36,7 +36,7 @@ defmodule Eblox.Data.Post do
     @eblox_syntax Md.Parser.Syntax.merge(
                     Application.compile_env(:eblox_syntax, :md_syntax, %{
                       magnet: [
-                        {"🏷️", %{transform: Tag, terminators: [], greedy: false}}
+                        {"🏷", %{transform: Tag, terminators: [], greedy: false}}
                       ]
                     })
                   )
@@ -46,14 +46,15 @@ defmodule Eblox.Data.Post do
 
   defmodule Walker do
     @moduledoc false
-    def prewalk({:a, %{class: "tag"}, text} = elem, acc),
-      do: {elem, Map.update(acc, :tags, [text], &[text | &1])}
+    def prewalk({:a, %{class: "tag"}, [text]} = elem, acc),
+      do: {elem, Map.update(acc, :tags, [text], &Enum.uniq([text | &1]))}
 
     def prewalk(elem, acc),
       do: {elem, acc}
   end
 
   @interval_after_parse 60_000
+  @default_properties %{tags: []}
 
   def on_transition(:idle, :read, nil, %{file: file} = payload) do
     case File.read(file) do
@@ -71,7 +72,7 @@ defmodule Eblox.Data.Post do
           payload
           |> Map.put(:md, parsed)
           |> Map.put(:html, html)
-          |> Map.put(:properties, properties)
+          |> Map.put(:properties, Map.merge(@default_properties, properties))
 
         {:ok, :parsed, payload}
 

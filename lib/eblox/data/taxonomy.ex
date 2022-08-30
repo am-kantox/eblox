@@ -97,6 +97,18 @@ defmodule Eblox.Data.Taxonomy do
     |> Enum.map(&elem(&1, 1))
   end
 
+  @doc "Returns keys of a taxonomy."
+  @spec keys(module()) :: [registry_key()]
+  def keys(name) do
+    Registry.keys(reg_name(name), self())
+  end
+
+  @doc "Returns values of a taxonomy for the given key."
+  @spec values(module(), registry_key()) :: [registry_value()]
+  def values(name, key) do
+    Registry.values(reg_name(name), key, self())
+  end
+
   @doc "Converts registry to a map with keys and lists of values."
   @spec to_map(module()) :: %{registry_key() => [registry_value()]}
   def to_map(name) do

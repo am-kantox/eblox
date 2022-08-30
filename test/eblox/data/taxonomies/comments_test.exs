@@ -1,4 +1,4 @@
-defmodule Eblox.Data.TaxonomyTest do
+defmodule Eblox.Data.Taxonomies.CommentsTest do
   use Eblox.ContentCase
 
   @provider Eblox.Data.Providers.FileSystem
@@ -17,17 +17,12 @@ defmodule Eblox.Data.TaxonomyTest do
   def post_id(id), do: "#{@content_dir}/#{id}"
 
   test "taxonomy with comments" do
-    # TODO: A few problems here:
-    # - It's slow for tests.
-    # - There should be a better way to wait until all posts are parsed.
-    # - It may be better to setup it once per test module with `setup_all`.
+    # TODO: Wait until parsing is completed.
     Process.sleep(10_000)
 
-    Taxonomy.add(@taxonomy, post_id("post-1"))
-    Taxonomy.add(@taxonomy, post_id("post-2"))
-    Taxonomy.add(@taxonomy, post_id("comment-1-1"))
-    Taxonomy.add(@taxonomy, post_id("comment-1-2"))
-    Taxonomy.add(@taxonomy, post_id("comment-1-2-1"))
+    Enum.each(~w|post-1 post-2 comment-1-1 comment-1-2 comment-1-2-1|, fn name ->
+      Taxonomy.add(@taxonomy, post_id(name))
+    end)
 
     assert [post_id("post-1")] == Taxonomy.lookup(@taxonomy, post_id("post-1"))
 
