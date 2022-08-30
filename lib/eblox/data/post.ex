@@ -27,7 +27,8 @@ defmodule Eblox.Data.Post do
 
     @impl Md.Transforms
     def apply(md, text) do
-      {:a, %{class: "tag", href: URI.encode_www_form(@href <> text)}, [md <> text]}
+      href = @href <> String.downcase(URI.encode_www_form(text))
+      {:a, %{class: "tag", href: href}, [md <> text]}
     end
   end
 
@@ -48,8 +49,10 @@ defmodule Eblox.Data.Post do
 
   defmodule Walker do
     @moduledoc false
-    def prewalk({:a, %{class: "tag"}, [text]} = elem, acc),
-      do: {elem, Map.update(acc, :tags, [text], &Enum.uniq([text | &1]))}
+    def prewalk({:a, %{class: "tag"}, [text]} = elem, acc) do
+      tag = String.downcase(text)
+      {elem, Map.update(acc, :tags, [tag], &Enum.uniq([tag | &1]))}
+    end
 
     def prewalk(elem, acc),
       do: {elem, acc}
