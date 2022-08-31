@@ -50,7 +50,7 @@ defmodule Eblox.Data.Post do
 
   defmodule Walker do
     @moduledoc false
-    def prewalk({:a, %{class: "tag", "data-tag": tag}, [text]} = elem, acc) do
+    def prewalk({:a, %{class: "tag", "data-tag": tag}, _text} = elem, acc) do
       {elem, Map.update(acc, :tags, [tag], &Enum.uniq([tag | &1]))}
     end
 
