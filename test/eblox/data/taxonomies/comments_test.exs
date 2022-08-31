@@ -6,7 +6,7 @@ defmodule Eblox.Data.Taxonomies.CommentsTest do
   @content_dir "test/fixtures/comments_content"
 
   @moduletag providers: [
-               {Eblox.Data.Provider, impl: @provider, content_dir: @content_dir}
+               {Eblox.Data.Provider, impl: @provider, content_dir: @content_dir, interval: 10}
              ],
              taxonomies: [
                {Eblox.Data.Taxonomy, impl: @taxonomy}
@@ -18,7 +18,7 @@ defmodule Eblox.Data.Taxonomies.CommentsTest do
 
   test "taxonomy with comments" do
     # TODO: Wait until parsing is completed.
-    Process.sleep(10_000)
+    Process.sleep(100)
 
     Enum.each(~w|post-1 post-2 comment-1-1 comment-1-2 comment-1-2-1|, fn name ->
       Taxonomy.add(@taxonomy, post_id(name))
