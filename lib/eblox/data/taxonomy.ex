@@ -92,7 +92,8 @@ defmodule Eblox.Data.Taxonomy do
   @doc "Finds a list of matching node values in a taxonomy by key."
   @spec lookup(module(), registry_key()) :: [registry_value()]
   def lookup(name, key) do
-    reg_name(name)
+    name
+    |> reg_name()
     |> Registry.lookup(key)
     |> Enum.map(&elem(&1, 1))
   end
@@ -100,7 +101,8 @@ defmodule Eblox.Data.Taxonomy do
   @doc "Returns keys of a taxonomy."
   @spec keys(module()) :: [registry_key()]
   def keys(name) do
-    reg_name(name)
+    name
+    |> reg_name()
     |> Registry.keys(self())
     |> Enum.uniq()
   end
@@ -108,13 +110,14 @@ defmodule Eblox.Data.Taxonomy do
   @doc "Returns values of a taxonomy for the given key."
   @spec values(module(), registry_key()) :: [registry_value()]
   def values(name, key) do
-    Registry.values(reg_name(name), key, self())
+    name |> reg_name() |> Registry.values(key, self())
   end
 
   @doc "Converts registry to a map with keys and lists of values."
   @spec to_map(module()) :: %{registry_key() => [registry_value()]}
   def to_map(name) do
-    reg_name(name)
+    name
+    |> reg_name()
     |> Registry.select([{{:"$1", :_, :"$2"}, [], [{{:"$1", :"$2"}}]}])
     |> Enum.group_by(&elem(&1, 0), &elem(&1, 1))
   end

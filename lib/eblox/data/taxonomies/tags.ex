@@ -16,13 +16,13 @@ defmodule Eblox.Data.Taxonomies.Tags do
   def on_add(registry, post_id) do
     %{properties: %{tags: tags}} = Siblings.payload(Eblox.Data.Content, post_id)
 
-    Enum.each(tags, fn tag -> Registry.register(registry, tag, post_id) end)
+    Enum.each(tags, &Registry.register(registry, &1, post_id))
   end
 
   @impl Taxonomy
   def on_remove(registry, post_id) do
     %{properties: %{tags: tags}} = Siblings.payload(Eblox.Data.Content, post_id)
 
-    Enum.each(tags, fn tag -> Registry.unregister_match(registry, tag, post_id) end)
+    Enum.each(tags, &Registry.unregister_match(registry, &1, post_id))
   end
 end

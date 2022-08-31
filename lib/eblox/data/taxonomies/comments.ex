@@ -17,7 +17,8 @@ defmodule Eblox.Data.Taxonomies.Comments do
     # TODO: Get parent ID from the payload when it's available.
     %{file: parent_id} = Siblings.payload(Eblox.Data.Content, post_id)
 
-    Registry.register(registry, parent_id, post_id)
+    registry
+    |> Registry.register(parent_id, post_id)
     |> elem(0)
   end
 
