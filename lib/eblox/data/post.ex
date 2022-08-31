@@ -27,15 +27,16 @@ defmodule Eblox.Data.Post do
 
     @impl Md.Transforms
     def apply(md, text) do
-      href = @href <> String.downcase(URI.encode_www_form(text))
-      {:a, %{class: "tag", href: href}, [md <> text]}
+      href = @href <> URI.encode_www_form(text)
+      tag = String.downcase(text)
+      {:a, %{class: "tag", "data-tag": tag, href: href}, [md <> text]}
     end
   end
 
   defmodule EbloxParser do
     @moduledoc false
 
-    @tag_terminators [?., ?,, ?;, ?:, ??, ?!]
+    @tag_terminators [:ascii_punctuation]
     @eblox_syntax Md.Parser.Syntax.merge(
                     Application.compile_env(:eblox_syntax, :md_syntax, %{
                       magnet: [
@@ -49,8 +50,7 @@ defmodule Eblox.Data.Post do
 
   defmodule Walker do
     @moduledoc false
-    def prewalk({:a, %{class: "tag"}, [text]} = elem, acc) do
-      tag = String.downcase(text)
+    def prewalk({:a, %{class: "tag", "data-tag": tag}, [text]} = elem, acc) do
       {elem, Map.update(acc, :tags, [tag], &Enum.uniq([tag | &1]))}
     end
 
