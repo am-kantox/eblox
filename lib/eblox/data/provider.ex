@@ -28,15 +28,17 @@ defmodule Eblox.Data.Provider do
   @callback scan(options :: map()) :: {map(), t()}
 
   @fsm """
-  idle --> |scan| ready
+  idle --> |scan!| ready
+  ready --> |update| ready
   ready --> |scan| ready
   ready --> |stop| died
   """
 
   use Finitomata, fsm: @fsm, impl_for: [:on_transition]
 
+  @impl Finitomata
   @doc false
-  def on_transition(_, :scan, _, payload) do
+  def on_transition(_, :scan!, _, payload) do
     # TODO Checks and proper error messages
     {impl, options} = Map.pop(payload, :impl)
     {options, %Provider{} = result} = impl.scan(options)
@@ -44,6 +46,19 @@ defmodule Eblox.Data.Provider do
     handle_changes(result)
 
     {:ok, :ready, Map.put(options, :impl, impl)}
+  end
+
+  @impl Finitomata
+  @doc false
+  def on_transition(:ready, :update, _event_payload, %{data: %{pid: pid}} = payload) do
+    send(pid, :on_update)
+    {:ok, :ready, payload}
+  end
+
+  @impl Finitomata
+  @doc false
+  def on_transition(:ready, :update, event_payload, payload) do
+    {:ok, :ready, Map.put(payload, :data, event_payload)}
   end
 
   @behaviour Siblings.Worker
@@ -63,7 +78,7 @@ defmodule Eblox.Data.Provider do
     |> Enum.to_list()
   end
 
-  @interval Application.compile_env(:eblox, :parse_interval, 10)
+  @interval Application.compile_env(:eblox, :parse_interval, 60_000)
 
   @spec action(:created | :deleted | :changed, binary()) :: :ok
   defp action(:created, file) do

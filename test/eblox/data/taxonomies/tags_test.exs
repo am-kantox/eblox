@@ -6,7 +6,7 @@ defmodule Eblox.Data.Taxonomies.TagsTest do
   @content_dir "test/fixtures/tags_content"
 
   @moduletag providers: [
-               {Eblox.Data.Provider, impl: @provider, content_dir: @content_dir, interval: 10}
+               {Eblox.Data.Provider, impl: @provider, content_dir: @content_dir, interval: 60_000}
              ],
              taxonomies: [
                {Eblox.Data.Taxonomy, impl: @taxonomy}
@@ -16,9 +16,16 @@ defmodule Eblox.Data.Taxonomies.TagsTest do
 
   def post_id(id), do: "#{@content_dir}/#{id}"
 
-  test "taxonomy with tags" do
-    # TODO: Wait until parsing is completed.
-    Process.sleep(100)
+  test "taxonomy with tags", context do
+    _providers_pid =
+      context.providers
+      |> GenServer.call(:which_children)
+      |> Enum.find(&match?({Eblox.Data.Providers, _, :worker, [Siblings]}, &1))
+      |> elem(1)
+
+    Siblings.transition(Eblox.Data.Providers, Eblox.Data.Provider, :update, %{pid: self()})
+    Siblings.transition(Eblox.Data.Providers, Eblox.Data.Provider, :update, %{})
+    assert_receive :on_update
 
     Enum.each(~w|post-1 post-2 post-3 post-4 post-5|, fn name ->
       Taxonomy.add(@taxonomy, post_id(name))
