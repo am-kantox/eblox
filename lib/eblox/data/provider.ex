@@ -29,12 +29,11 @@ defmodule Eblox.Data.Provider do
 
   @fsm """
   idle --> |scan!| ready
-  ready --> |update| ready
   ready --> |scan| ready
   ready --> |stop| died
   """
 
-  use Finitomata, fsm: @fsm, impl_for: [:on_transition]
+  use Finitomata, fsm: @fsm, impl_for: [:on_transition, :on_enter]
 
   @impl Finitomata
   @doc false
@@ -50,15 +49,10 @@ defmodule Eblox.Data.Provider do
 
   @impl Finitomata
   @doc false
-  def on_transition(:ready, :update, _event_payload, %{data: %{pid: pid}} = payload) do
-    send(pid, :on_update)
-    {:ok, :ready, payload}
-  end
-
-  @impl Finitomata
-  @doc false
-  def on_transition(:ready, :update, event_payload, payload) do
-    {:ok, :ready, Map.put(payload, :data, event_payload)}
+  def on_enter(:ready, %{payload: payload}) do
+    payload
+    |> Map.get(:listeners, [])
+    |> Enum.each(&Process.send(&1, :on_ready, []))
   end
 
   @behaviour Siblings.Worker

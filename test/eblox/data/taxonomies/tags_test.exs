@@ -6,7 +6,7 @@ defmodule Eblox.Data.Taxonomies.TagsTest do
   @content_dir "test/fixtures/tags_content"
 
   @moduletag providers: [
-               {Eblox.Data.Provider, impl: @provider, content_dir: @content_dir, interval: 60_000}
+               {Eblox.Data.Provider, listeners: [Eblox.Test.Messenger], impl: @provider, content_dir: @content_dir, interval: 60_000}
              ],
              taxonomies: [
                {Eblox.Data.Taxonomy, impl: @taxonomy}
@@ -23,9 +23,9 @@ defmodule Eblox.Data.Taxonomies.TagsTest do
       |> Enum.find(&match?({Eblox.Data.Providers, _, :worker, [Siblings]}, &1))
       |> elem(1)
 
-    Siblings.transition(Eblox.Data.Providers, Eblox.Data.Provider, :update, %{pid: self()})
-    Siblings.transition(Eblox.Data.Providers, Eblox.Data.Provider, :update, %{})
-    assert_receive :on_update
+    Process.send(Eblox.Test.Messenger, {:listener, self()}, [])
+
+    assert_receive :on_ready
 
     Enum.each(~w|post-1 post-2 post-3 post-4 post-5|, fn name ->
       Taxonomy.add(@taxonomy, post_id(name))

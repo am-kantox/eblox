@@ -10,7 +10,6 @@ defmodule Eblox.Data.Post do
   read --> |parse!| parsed
   read --> |parse!| errored
   parsed --> |delete| deleted
-  parsed --> |update| parsed
   parsed --> |parse| parsed
   parsed --> |parse| errored
   errored --> |delete| deleted
@@ -84,12 +83,6 @@ defmodule Eblox.Data.Post do
       _other ->
         :error
     end
-  end
-
-  @impl Finitomata
-  @doc false
-  def on_transition(:parsed, :update, event_payload, payload) do
-    {:ok, :parsed, Map.put(payload, :data, event_payload)}
   end
 
   @behaviour Siblings.Worker
