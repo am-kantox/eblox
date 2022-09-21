@@ -16,17 +16,17 @@ defmodule Eblox.ContentCase do
 
   setup context do
     app = Mix.Project.config()[:app]
-    providers = Map.get(context, :providers, [])
-    taxonomies = Map.get(context, :taxonomies, [])
 
     Application.stop(app)
 
-    start_supervised!({Eblox.Data.Providers, providers})
-    start_supervised!({Eblox.Data.Taxonomies, taxonomies})
+    providers = start_supervised!({Eblox.Data.Providers, Map.get(context, :providers, [])})
+    taxonomies = start_supervised!({Eblox.Data.Taxonomies, Map.get(context, :taxonomies, [])})
 
     on_exit(fn -> Application.start(app) end)
 
     {:ok,
+     providers: providers,
+     taxonomies: taxonomies,
      content_name: Eblox.Data.Content,
      providers_name: Eblox.Data.Providers,
      taxonomies_name: Eblox.Data.Taxonomies}
