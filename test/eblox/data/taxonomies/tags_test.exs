@@ -6,7 +6,11 @@ defmodule Eblox.Data.Taxonomies.TagsTest do
   @content_dir "test/fixtures/tags_content"
 
   @moduletag providers: [
-               {Eblox.Data.Provider, listeners: [Eblox.Test.Messenger], impl: @provider, content_dir: @content_dir, interval: 60_000}
+               {Eblox.Data.Provider,
+                listeners: [Eblox.Test.Messenger],
+                impl: @provider,
+                content_dir: @content_dir,
+                interval: 60_000}
              ],
              taxonomies: [
                {Eblox.Data.Taxonomy, impl: @taxonomy}
