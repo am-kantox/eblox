@@ -89,9 +89,9 @@ defmodule Eblox.Data.Provider do
 
   @spec action(Provider.t(), :created | :deleted | :changed, binary()) :: on_action_create()
   defp action(impl, :created, file) do
-    with properties = %{} <- impl.initial_payload(file),
+    with payload = %{} <- impl.initial_payload(file),
          :ok <-
-           Siblings.start_child(Eblox.Data.Post, file, properties,
+           Siblings.start_child(Eblox.Data.Post, file, payload,
              name: Eblox.Data.Content,
              interval: @interval
            ) do
