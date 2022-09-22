@@ -18,6 +18,11 @@ defmodule Eblox.Data.Provider do
   """
   @type t :: %{__struct__: Provider, created: [uri()], deleted: [uri()], changed: [uri()]}
 
+  @type on_action_create ::
+          :ok
+          | {:error, {:already_started, pid()}}
+          | {:error, :ignore | :max_children | :invalid_properties | term()}
+
   use Estructura, enumerable: true
 
   defstruct created: [], deleted: [], changed: []
@@ -79,15 +84,31 @@ defmodule Eblox.Data.Provider do
 
   @interval Application.compile_env(:eblox, :parse_interval, 60_000)
 
-  @spec action(Provider.t(), :created | :deleted | :changed, binary()) :: :ok
+  @spec action(Provider.t(), :created | :deleted | :changed, binary()) :: on_action_create()
   defp action(impl, :created, file) do
     with properties = %{} <- impl.initial_payload(file),
-         {:ok, _server} <-
+         :ok <-
            Siblings.start_child(Eblox.Data.Post, file, properties,
              name: Eblox.Data.Content,
              interval: @interval
-           ),
-         do: :ok
+           ) do
+      :ok
+    else
+      {:ok, _server} ->
+        :ok
+
+      :ignore ->
+        Logger.warn("[PROVIDER] Failed to start post: process ignored")
+        {:error, :ignore}
+
+      {:error, reason} ->
+        Logger.warn("[PROVIDER] Failed to start post: " <> inspect(reason))
+        {:error, reason}
+
+      _ ->
+        Logger.warn("[PROVIDER] Failed to start post: invalid initial properties")
+        {:error, :invalid_properties}
+    end
   end
 
   defp action(impl, :deleted, file) do
