@@ -24,6 +24,10 @@ defmodule Eblox.ContentCase do
 
     on_exit(fn -> Application.start(app) end)
 
+    Process.send(Eblox.Test.Messenger, {:listener, self()}, [])
+
+    assert_receive :on_ready
+
     {:ok,
      providers: providers,
      taxonomies: taxonomies,

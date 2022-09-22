@@ -6,7 +6,8 @@ defmodule Eblox.Data.Taxonomies.CommentsTest do
   @content_dir "test/fixtures/comments_content"
 
   @moduletag providers: [
-               {Eblox.Data.Provider, impl: @provider, content_dir: @content_dir, interval: 10}
+               {Eblox.Data.Provider,
+                listeners: [Eblox.Test.Messenger], impl: @provider, content_dir: @content_dir}
              ],
              taxonomies: [
                {Eblox.Data.Taxonomy, impl: @taxonomy}
@@ -17,9 +18,6 @@ defmodule Eblox.Data.Taxonomies.CommentsTest do
   def post_id(id), do: "#{@content_dir}/#{id}"
 
   test "taxonomy with comments" do
-    # TODO: Wait until parsing is completed.
-    Process.sleep(100)
-
     root_id = "root"
     post_1_id = post_id("post-1")
     post_2_id = post_id("post-2")
