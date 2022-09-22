@@ -74,7 +74,7 @@ defmodule Eblox.Data.Provider do
     |> Flow.flat_map(fn {action, list} -> Enum.map(list, &{action, &1}) end)
     |> Flow.partition()
     |> Flow.reduce(fn -> [] end, fn {action, elem}, acc -> [action(impl, action, elem) | acc] end)
-    |> Enum.to_list()
+    |> Stream.run()
   end
 
   @interval Application.compile_env(:eblox, :parse_interval, 60_000)
