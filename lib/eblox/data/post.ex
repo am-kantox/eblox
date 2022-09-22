@@ -6,11 +6,9 @@ defmodule Eblox.Data.Post do
   require Logger
 
   @fsm """
-  idle --> |read| read
-  idle --> |delete| deleted
-  read --> |parse| parsed
-  read --> |parse| errored
-  read --> |delete| deleted
+  idle --> |read!| read
+  read --> |parse!| parsed
+  read --> |parse!| errored
   parsed --> |delete| deleted
   parsed --> |parse| parsed
   parsed --> |parse| errored
@@ -58,17 +56,18 @@ defmodule Eblox.Data.Post do
       do: {elem, acc}
   end
 
-  @interval_after_parse 60_000
   @default_properties %{tags: [], links: []}
 
-  def on_transition(:idle, :read, nil, %{file: file} = payload) do
+  @impl Finitomata
+  def on_transition(:idle, :read!, _event_payload, %{file: file} = payload) do
     case File.read(file) do
       {:ok, content} -> {:ok, :read, Map.put(payload, :content, content)}
       {:error, _reason} -> :error
     end
   end
 
-  def on_transition(:read, :parse, nil, %{content: content} = payload) do
+  @impl Finitomata
+  def on_transition(:read, :parse!, _event_payload, %{content: content} = payload) do
     case EbloxParser.parse(content) do
       {"", %Md.Parser.State{} = parsed} ->
         {initial_properties, payload} = Map.pop(payload, :properties, %{})
@@ -95,19 +94,11 @@ defmodule Eblox.Data.Post do
   @behaviour Siblings.Worker
 
   @impl Siblings.Worker
-  def perform(:idle, _id, _payload) do
-    {:transition, :read, nil}
+  def perform(:parsed, _id, _payload) do
+    :noop
   end
 
   @impl Siblings.Worker
-  def perform(:read, _id, _payload) do
-    {:transition, :parse, nil}
-  end
-
-  def perform(:parsed, _id, _payload) do
-    {:reschedule, @interval_after_parse}
-  end
-
   def perform(state, id, payload) do
     ["[PERFORM] ", state, id, payload]
     |> inspect()
