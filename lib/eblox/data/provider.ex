@@ -79,7 +79,7 @@ defmodule Eblox.Data.Provider do
 
   @interval Application.compile_env(:eblox, :parse_interval, 60_000)
 
-  @spec action(module(), :created | :deleted | :changed, binary()) :: :ok
+  @spec action(Provider.t(), :created | :deleted | :changed, binary()) :: :ok
   defp action(impl, :created, file) do
     with properties = %{} <- impl.initial_payload(file),
          {:ok, _server} <-
@@ -90,11 +90,11 @@ defmodule Eblox.Data.Provider do
          do: :ok
   end
 
-  defp action(_impl, :deleted, file) do
-    Siblings.transition(Eblox.Data.Content, file, :delete, nil)
+  defp action(impl, :deleted, file) do
+    Siblings.transition(Eblox.Data.Content, file, :delete, %{impl: impl})
   end
 
-  defp action(_impl, :changed, file) do
-    Siblings.transition(Eblox.Data.Content, file, :parse, nil)
+  defp action(impl, :changed, file) do
+    Siblings.transition(Eblox.Data.Content, file, :parse, %{impl: impl})
   end
 end
