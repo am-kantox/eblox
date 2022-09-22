@@ -17,6 +17,29 @@ defmodule Eblox.Data.Post do
 
   use Finitomata, @fsm
 
+  defmodule Properties do
+    @moduledoc """
+    Post properties extracted from provider or content.
+    """
+
+    alias Eblox.Data.Post.Properties
+
+    @type t :: %{
+            __struct__: Properties,
+            links: list(term()),
+            tags: list(binary())
+          }
+    defstruct links: [], tags: []
+
+    def merge(map1, map2) do
+      Map.merge(map1, map2, &resolve_conflict/3)
+    end
+
+    def resolve_conflict(:tags, v1, v2), do: Enum.uniq(v1 ++ v2)
+    def resolve_conflict(:links, v1, v2), do: Enum.uniq(v1 ++ v2)
+    def resolve_conflict(_, _, v2), do: v2
+  end
+
   defmodule Tag do
     @moduledoc false
     @behaviour Md.Transforms
@@ -56,8 +79,6 @@ defmodule Eblox.Data.Post do
       do: {elem, acc}
   end
 
-  @default_properties %{tags: [], links: []}
-
   @impl Finitomata
   def on_transition(:idle, :read!, _event_payload, %{file: file} = payload) do
     case File.read(file) do
@@ -74,9 +95,9 @@ defmodule Eblox.Data.Post do
         {html, parsed_properties} = Md.generate(parsed, walker: &Walker.prewalk/2, format: :none)
 
         properties =
-          @default_properties
-          |> Map.merge(initial_properties)
-          |> Map.merge(parsed_properties)
+          %Properties{}
+          |> Properties.merge(initial_properties)
+          |> Properties.merge(parsed_properties)
 
         payload =
           payload

@@ -18,6 +18,9 @@ defmodule Eblox.Data.Provider do
   """
   @type t :: %{__struct__: Provider, created: [uri()], deleted: [uri()], changed: [uri()]}
 
+  @typedoc """
+  Return values of post's process start action.
+  """
   @type on_action_create ::
           :ok
           | {:error, {:already_started, pid()}}

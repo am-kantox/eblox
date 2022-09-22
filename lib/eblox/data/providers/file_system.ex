@@ -2,6 +2,7 @@ defmodule Eblox.Data.Providers.FileSystem do
   @moduledoc false
 
   alias Eblox.Data.Provider
+  alias Eblox.Data.Post.Properties
 
   @type md5 :: <<_::256>>
 
@@ -17,7 +18,7 @@ defmodule Eblox.Data.Providers.FileSystem do
     |> String.replace_suffix(@children_dir_suffix, "")
     |> case do
       ^dir -> %{file: file}
-      parent_id -> %{file: file, properties: %{links: [parent_id]}}
+      parent_id -> %{file: file, properties: %Properties{links: [parent_id]}}
     end
   end
 
