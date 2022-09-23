@@ -26,18 +26,19 @@ defmodule Eblox.Data.Post do
 
     @type t :: %{
             __struct__: Properties,
-            links: list(term()),
-            tags: list(binary())
+            links: MapSet.t(term()),
+            tags: MapSet.t(binary())
           }
-    defstruct links: [], tags: []
+    defstruct links: MapSet.new(), tags: MapSet.new()
 
     def merge(map1, map2) do
       Map.merge(map1, map2, &resolve_conflict/3)
     end
 
-    def resolve_conflict(:tags, v1, v2), do: Enum.uniq(v1 ++ v2)
-    def resolve_conflict(:links, v1, v2), do: Enum.uniq(v1 ++ v2)
-    def resolve_conflict(_, _, v2), do: v2
+    def resolve_conflict(:tags, v1, v2),
+      do: MapSet.union(MapSet.new(v1), MapSet.new(v2))
+    def resolve_conflict(:links, v1, v2),
+      do: MapSet.union(MapSet.new(v1), MapSet.new(v2))
   end
 
   defmodule Tag do
