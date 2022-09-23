@@ -4,6 +4,7 @@ defmodule Eblox.Data.Taxonomies.Comments do
   """
 
   alias Eblox.Data.Taxonomy
+  alias Eblox.Data.Post.Properties
 
   @behaviour Taxonomy
 
@@ -31,8 +32,12 @@ defmodule Eblox.Data.Taxonomies.Comments do
   end
 
   defp post_parent_id(post_id) do
-    case Siblings.payload(Eblox.Data.Content, post_id) do
-      %{properties: %{links: [parent_id]}} -> parent_id
+    Siblings.payload(Eblox.Data.Content, post_id)
+    |> Map.get(:properties, %Properties{})
+    |> Map.get(:links, MapSet.new())
+    |> MapSet.to_list()
+    |> case do
+      [parent_id] -> parent_id
       _ -> @root_id
     end
   end

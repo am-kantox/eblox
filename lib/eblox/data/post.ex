@@ -35,8 +35,11 @@ defmodule Eblox.Data.Post do
       Map.merge(map1, map2, &resolve_conflict/3)
     end
 
+    def resolve_conflict(:__struct__, _, _), do: __MODULE__
+
     def resolve_conflict(:tags, v1, v2),
       do: MapSet.union(MapSet.new(v1), MapSet.new(v2))
+
     def resolve_conflict(:links, v1, v2),
       do: MapSet.union(MapSet.new(v1), MapSet.new(v2))
   end
@@ -73,7 +76,7 @@ defmodule Eblox.Data.Post do
   defmodule Walker do
     @moduledoc false
     def prewalk({:a, %{class: "tag", "data-tag": tag}, _text} = elem, acc) do
-      {elem, Map.update(acc, :tags, [tag], &Enum.uniq([tag | &1]))}
+      {elem, Map.update(acc, :tags, MapSet.new([tag]), &MapSet.put(&1, tag))}
     end
 
     def prewalk(elem, acc),

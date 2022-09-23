@@ -18,7 +18,7 @@ defmodule Eblox.Data.Providers.FileSystem do
     |> String.replace_suffix(@children_dir_suffix, "")
     |> case do
       ^dir -> %{file: file}
-      parent_id -> %{file: file, properties: %Properties{links: [parent_id]}}
+      parent_id -> %{file: file, properties: %Properties{links: MapSet.new([parent_id])}}
     end
   end
 
