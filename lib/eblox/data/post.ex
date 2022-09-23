@@ -17,6 +17,30 @@ defmodule Eblox.Data.Post do
 
   use Finitomata, @fsm
 
+  defmodule Properties do
+    @moduledoc """
+    Post properties extracted from provider or content.
+    """
+
+    alias Eblox.Data.Post.Properties
+
+    @type t :: %{
+            __struct__: Properties,
+            links: MapSet.t(term()),
+            tags: MapSet.t(binary())
+          }
+    defstruct links: MapSet.new(), tags: MapSet.new()
+
+    def merge(map1, map2) do
+      Map.merge(map1, map2, &resolve_conflict/3)
+    end
+
+    def resolve_conflict(:tags, v1, v2),
+      do: MapSet.union(MapSet.new(v1), MapSet.new(v2))
+    def resolve_conflict(:links, v1, v2),
+      do: MapSet.union(MapSet.new(v1), MapSet.new(v2))
+  end
+
   defmodule Tag do
     @moduledoc false
     @behaviour Md.Transforms
@@ -56,8 +80,6 @@ defmodule Eblox.Data.Post do
       do: {elem, acc}
   end
 
-  @default_properties %{tags: []}
-
   @impl Finitomata
   def on_transition(:idle, :read!, _event_payload, %{file: file} = payload) do
     case File.read(file) do
@@ -70,13 +92,19 @@ defmodule Eblox.Data.Post do
   def on_transition(:read, :parse!, _event_payload, %{content: content} = payload) do
     case EbloxParser.parse(content) do
       {"", %Md.Parser.State{} = parsed} ->
-        {html, properties} = Md.generate(parsed, walker: &Walker.prewalk/2, format: :none)
+        {initial_properties, payload} = Map.pop(payload, :properties, %{})
+        {html, parsed_properties} = Md.generate(parsed, walker: &Walker.prewalk/2, format: :none)
+
+        properties =
+          %Properties{}
+          |> Properties.merge(initial_properties)
+          |> Properties.merge(parsed_properties)
 
         payload =
           payload
           |> Map.put(:md, parsed)
           |> Map.put(:html, html)
-          |> Map.put(:properties, Map.merge(@default_properties, properties))
+          |> Map.put(:properties, properties)
 
         {:ok, :parsed, payload}
 

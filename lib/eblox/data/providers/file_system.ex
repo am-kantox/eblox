@@ -2,10 +2,25 @@ defmodule Eblox.Data.Providers.FileSystem do
   @moduledoc false
 
   alias Eblox.Data.Provider
+  alias Eblox.Data.Post.Properties
 
   @type md5 :: <<_::256>>
 
   @behaviour Provider
+
+  @children_dir_suffix "-children"
+
+  @impl Provider
+  def initial_payload(file) do
+    dir = Path.dirname(file)
+
+    dir
+    |> String.replace_suffix(@children_dir_suffix, "")
+    |> case do
+      ^dir -> %{file: file}
+      parent_id -> %{file: file, properties: %Properties{links: [parent_id]}}
+    end
+  end
 
   @impl Provider
   def scan(options) do

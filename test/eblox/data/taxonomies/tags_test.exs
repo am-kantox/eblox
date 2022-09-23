@@ -7,10 +7,7 @@ defmodule Eblox.Data.Taxonomies.TagsTest do
 
   @moduletag providers: [
                {Eblox.Data.Provider,
-                listeners: [Eblox.Test.Messenger],
-                impl: @provider,
-                content_dir: @content_dir,
-                interval: 60_000}
+                listeners: [Eblox.Test.Messenger], impl: @provider, content_dir: @content_dir}
              ],
              taxonomies: [
                {Eblox.Data.Taxonomy, impl: @taxonomy}
@@ -20,17 +17,7 @@ defmodule Eblox.Data.Taxonomies.TagsTest do
 
   def post_id(id), do: "#{@content_dir}/#{id}"
 
-  test "taxonomy with tags", context do
-    _providers_pid =
-      context.providers
-      |> GenServer.call(:which_children)
-      |> Enum.find(&match?({Eblox.Data.Providers, _, :worker, [Siblings]}, &1))
-      |> elem(1)
-
-    Process.send(Eblox.Test.Messenger, {:listener, self()}, [])
-
-    assert_receive :on_ready
-
+  test "taxonomy with tags" do
     Enum.each(~w|post-1 post-2 post-3 post-4 post-5|, fn name ->
       Taxonomy.add(@taxonomy, post_id(name))
     end)
