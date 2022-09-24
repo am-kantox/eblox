@@ -26,7 +26,7 @@ config :eblox, EbloxWeb.Endpoint,
 # at the `config/runtime.exs`.
 config :eblox, Eblox.Mailer, adapter: Swoosh.Adapters.Local
 
-config :md, download_cards: true
+config :md, download_cards: true, httpc_options: [ssl: [verify: :verify_peer, cacertfile: "priv/cacerts.pem"]]
 
 # Swoosh API client is needed for adapters other than SMTP.
 config :swoosh, :api_client, false
