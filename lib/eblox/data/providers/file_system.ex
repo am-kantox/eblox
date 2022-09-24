@@ -1,8 +1,7 @@
 defmodule Eblox.Data.Providers.FileSystem do
   @moduledoc false
 
-  alias Eblox.Data.Provider
-  alias Eblox.Data.Post.Properties
+  alias Eblox.Data.{Post.Properties, Provider}
 
   @type md5 :: <<_::256>>
 

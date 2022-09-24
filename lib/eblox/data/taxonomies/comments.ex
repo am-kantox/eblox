@@ -3,8 +3,7 @@ defmodule Eblox.Data.Taxonomies.Comments do
   Data taxonomy implementation for post's comments tree.
   """
 
-  alias Eblox.Data.Taxonomy
-  alias Eblox.Data.Post.Properties
+  alias Eblox.Data.{Post.Properties, Taxonomy}
 
   @behaviour Taxonomy
 

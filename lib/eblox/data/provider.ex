@@ -75,7 +75,7 @@ defmodule Eblox.Data.Provider do
   def perform(:died, _id, payload), do: {:transition, :*, payload}
   def perform(_state, _id, payload), do: {:transition, :scan, payload}
 
-  @spec handle_changes(module(), t()) :: [:ok]
+  @spec handle_changes(module(), t()) :: :ok
   def handle_changes(impl, %Provider{created: _, deleted: _, changed: _} = changes) do
     changes
     |> Flow.from_enumerable()
