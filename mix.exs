@@ -26,7 +26,7 @@ defmodule Eblox.MixProject do
       ],
       dialyzer: [
         plt_file: {:no_warn, ".dialyzer/plts/dialyzer.plt"},
-        plt_add_apps: [:floki],
+        plt_add_apps: [:ex_unit, :mix, :floki],
         ignore_warnings: ".dialyzer/ignore.exs"
       ]
     ]
