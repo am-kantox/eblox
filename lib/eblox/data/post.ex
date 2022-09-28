@@ -111,10 +111,14 @@ defmodule Eblox.Data.Post do
 
         {:ok, :parsed, payload}
 
-      _other ->
-        :error
+      other ->
+        {:ok, :errored, Map.put(payload, :parse_result, %{error: other})}
     end
   end
+
+  @impl Finitomata
+  def on_transition(:parsed, :parse, event_payload, payload),
+    do: on_transition(:read, :parse!, event_payload, payload)
 
   @behaviour Siblings.Worker
 
