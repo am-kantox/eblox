@@ -1,16 +1,20 @@
 defmodule Eblox.MixProject do
   use Mix.Project
 
+  @version "0.1.0"
+  @app :eblox
+
   def project do
     [
-      app: :eblox,
-      version: "0.1.0",
+      app: @app,
+      version: @version,
       elixir: "~> 1.13",
       elixirc_paths: elixirc_paths(Mix.env()),
-      compilers: Mix.compilers(),
+      compilers: compilers(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps(),
+      docs: docs(),
       test_coverage: [tool: ExCoveralls],
       preferred_cli_env: [
         credo: :ci,
@@ -22,7 +26,7 @@ defmodule Eblox.MixProject do
       ],
       dialyzer: [
         plt_file: {:no_warn, ".dialyzer/plts/dialyzer.plt"},
-        plt_add_apps: [:floki],
+        plt_add_apps: [:ex_unit, :mix, :floki],
         ignore_warnings: ".dialyzer/ignore.exs"
       ]
     ]
@@ -38,10 +42,6 @@ defmodule Eblox.MixProject do
     ]
   end
 
-  # Specifies which paths to compile per environment.
-  defp elixirc_paths(:test), do: ["lib", "test/support"]
-  defp elixirc_paths(_), do: ["lib"]
-
   # Specifies your project dependencies.
   #
   # Type `mix help deps` for examples and options.
@@ -53,7 +53,7 @@ defmodule Eblox.MixProject do
       {:postgrex, ">= 0.0.0"},
       {:phoenix_html, "~> 3.0"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
-      {:phoenix_live_view, "~> 0.17"},
+      {:phoenix_live_view, "~> 0.18"},
       {:flow, "~> 1.0"},
       {:estructura, "~> 0.3"},
       {:siblings, "~> 0.5"},
@@ -63,7 +63,7 @@ defmodule Eblox.MixProject do
       {:excoveralls, "~> 0.14", only: :test, runtime: false},
       {:dialyxir, "~> 1.0", only: :ci, runtime: false},
       {:ex_doc, ">= 0.0.0", only: :dev},
-      {:phoenix_live_dashboard, "~> 0.6"},
+      {:phoenix_live_dashboard, "~> 0.7"},
       {:esbuild, "~> 0.5", runtime: Mix.env() == :dev},
       {:swoosh, "~> 1.3"},
       {:telemetria, "~> 0.5"},
@@ -72,7 +72,7 @@ defmodule Eblox.MixProject do
       {:gettext, "~> 0.20"},
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
-      {:petal_components, "~> 0.17.6"},
+      {:petal_components, "~> 0.18.0"},
       {:tailwind, "~> 0.1", runtime: Mix.env() == :dev}
     ]
   end
@@ -103,4 +103,52 @@ defmodule Eblox.MixProject do
       ]
     ]
   end
+
+  defp compilers(:dev), do: compilers(:prod)
+  defp compilers(_), do: [:telemetria, :finitomata | Mix.compilers()]
+
+  defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(:ci), do: ["lib", "test/support"]
+  defp elixirc_paths(:dev), do: ["lib", "test/support"]
+  defp elixirc_paths(_), do: ["lib"]
+
+  defp docs do
+    [
+      main: "readme",
+      source_ref: "v#{@version}",
+      canonical: "http://hexdocs.pm/#{@app}",
+      # logo: "stuff/#{@app}-48x48.png",
+      source_url: "https://github.com/am-kantox/#{@app}",
+      # assets: "stuff/images",
+      extras: ~w[README.md],
+      groups_for_modules: [],
+      before_closing_body_tag: &before_closing_body_tag/1
+    ]
+  end
+
+  defp before_closing_body_tag(:html) do
+    """
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@8.13.3/dist/mermaid.min.js"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+    mermaid.initialize({ startOnLoad: false });
+    let id = 0;
+    for (const codeEl of document.querySelectorAll("pre code.mermaid")) {
+      const preEl = codeEl.parentElement;
+      const graphDefinition = codeEl.textContent;
+      const graphEl = document.createElement("div");
+      const graphId = "mermaid-graph-" + id++;
+      mermaid.render(graphId, graphDefinition, function (svgSource, bindListeners) {
+        graphEl.innerHTML = svgSource;
+        bindListeners && bindListeners(graphEl);
+        preEl.insertAdjacentElement("afterend", graphEl);
+        preEl.remove();
+      });
+    }
+    });
+    </script>
+    """
+  end
+
+  defp before_closing_body_tag(_), do: ""
 end
