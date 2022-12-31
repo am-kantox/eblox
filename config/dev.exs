@@ -2,8 +2,8 @@ import Config
 
 # Configure your database
 config :eblox, Eblox.Repo,
-  username: "eventorydbadmin",
-  password: "staging",
+  username: "postgres",
+  password: "postgres",
   database: "eblox_dev",
   hostname: "localhost",
   show_sensitive_data_on_connection_error: true,

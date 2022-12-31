@@ -14,7 +14,7 @@ defmodule EbloxWeb.PostController do
   defp html(path) do
     case Siblings.payload(Eblox.Data.Content, "priv/test_content/" <> path) do
       %{html: html} -> html
-      other -> "<b font-color='white'>#{inspect(other)}</b>"
+      other -> "<b font-color='red'>#{inspect(other)}</b>"
     end
   end
 end

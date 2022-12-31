@@ -30,6 +30,8 @@ defmodule EbloxWeb.ConnCase do
 
       # The default endpoint for testing
       @endpoint EbloxWeb.Endpoint
+
+      use EbloxWeb, :verified_routes
     end
   end
 

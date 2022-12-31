@@ -17,12 +17,17 @@ defmodule EbloxWeb do
   and import those modules here.
   """
 
+  def static_paths, do: ~w|assets fonts images favicon.ico robots.txt|
+
   def controller do
     quote do
       use Phoenix.Controller, namespace: EbloxWeb
 
       import Plug.Conn
       import EbloxWeb.Gettext
+
+      unquote(verified_routes())
+
       alias EbloxWeb.Router.Helpers, as: Routes
     end
   end
@@ -97,7 +102,18 @@ defmodule EbloxWeb do
         ColorSchemeSwitch
       }
 
+      unquote(verified_routes())
+
       use PetalComponents
+    end
+  end
+
+  def verified_routes do
+    quote do
+      use Phoenix.VerifiedRoutes,
+        endpoint: EbloxWeb.Endpoint,
+        router: EbloxWeb.Router,
+        statics: EbloxWeb.static_paths()
     end
   end
 

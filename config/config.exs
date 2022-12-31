@@ -27,8 +27,9 @@ config :eblox, EbloxWeb.Endpoint,
 config :eblox, Eblox.Mailer, adapter: Swoosh.Adapters.Local
 
 config :md,
-  download_cards: true,
-  httpc_options: [ssl: [verify: :verify_peer, cacertfile: "priv/cacerts.pem"]]
+# httpc_options: [ssl: [verify: :verify_peer, cacertfile: "priv/cacerts.pem"]],
+  download_cards: true
+
 
 # Swoosh API client is needed for adapters other than SMTP.
 config :swoosh, :api_client, false

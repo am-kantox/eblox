@@ -47,12 +47,13 @@ defmodule Eblox.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:phoenix, "~> 1.6.6"},
+      {:phoenix, "~> 1.7.0-rc"},
       {:phoenix_ecto, "~> 4.4"},
       {:ecto_sql, "~> 3.6"},
       {:postgrex, ">= 0.0.0"},
       {:phoenix_html, "~> 3.0"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
+      {:phoenix_view, "~> 2.0"},
       {:phoenix_live_view, "~> 0.18"},
       {:flow, "~> 1.0"},
       {:estructura, "~> 0.3"},
@@ -72,7 +73,7 @@ defmodule Eblox.MixProject do
       {:gettext, "~> 0.20"},
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
-      {:petal_components, "~> 0.18.0"},
+      {:petal_components, "~> 0.18"},
       {:tailwind, "~> 0.1", runtime: Mix.env() == :dev}
     ]
   end
