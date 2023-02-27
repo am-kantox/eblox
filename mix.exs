@@ -73,7 +73,7 @@ defmodule Eblox.MixProject do
       {:gettext, "~> 0.20"},
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
-      {:petal_components, "~> 0.18"},
+      {:petal_components, "~> 1.0"},
       {:tailwind, "~> 0.1", runtime: Mix.env() == :dev}
     ]
   end
